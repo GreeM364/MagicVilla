@@ -1,5 +1,7 @@
 using MagicVilla;
 using MagicVilla.Data;
+using MagicVilla.Repository;
+using MagicVilla.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -17,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Host.UseSerilog();
+builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 
 var app = builder.Build();
 
