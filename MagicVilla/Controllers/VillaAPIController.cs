@@ -97,7 +97,7 @@ namespace MagicVilla.Controllers
                 }
                 if (createDTO == null)
                 {
-                    _response.Result = createDTO;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
 
                     _logger.LogError("The resulting model of villa is null");
@@ -145,7 +145,6 @@ namespace MagicVilla.Controllers
                 await _villaRepository.RemoveAsync(villa);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.IsSuccess = true;
 
                 _logger.LogInformation("Villa was removed with id: " + id);
                 return Ok(_response);
@@ -188,7 +187,6 @@ namespace MagicVilla.Controllers
                 await _villaRepository.UpdateAsync(model);
 
                 _response.StatusCode = HttpStatusCode.NoContent;
-                _response.IsSuccess = true;
 
                 _logger.LogInformation("Villa was updated with id: " + id);
                 return Ok(_response);
@@ -205,39 +203,50 @@ namespace MagicVilla.Controllers
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdatePartialVilla(int id, JsonPatchDocument<VillaUpdateDTO> patchDTO)
+        public async Task<ActionResult<APIResponse>> UpdatePartialVilla(int id, JsonPatchDocument<VillaUpdateDTO> patchDTO)
         {
-            if (patchDTO == null)
+            try
             {
-                _logger.LogError("The resulting patch model of villa is null");
-                return BadRequest();
+                if (patchDTO == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+
+                    _logger.LogError("The resulting patch model of villa is null");
+                    return BadRequest();
+                }
+
+                var villa = await _villaRepository.GetAsync(i => i.Id == id, false);
+
+                VillaUpdateDTO villaDTO = _mapper.Map<VillaUpdateDTO>(villa);
+
+                if (villa == null)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+
+                    _logger.LogError($"Villa with similar id {id} not found for partial update");
+                    return BadRequest();
+                }
+
+                patchDTO.ApplyTo(villaDTO, ModelState);
+
+                Villa model = _mapper.Map<Villa>(villaDTO);
+
+                await _villaRepository.UpdateAsync(model);
+
+                _response.StatusCode = HttpStatusCode.NoContent;
+
+                _logger.LogInformation("Villa was partial updated with id: " + id);
+                return Ok(_response);
             }
-
-            var villa = await _villaRepository.GetAsync(i => i.Id == id, false);
-
-            VillaUpdateDTO villaDTO = _mapper.Map<VillaUpdateDTO>(villa);
-            
-
-            if (villa == null)
+            catch (Exception ex)
             {
-                _logger.LogError($"Villa with similar id {id} not found for partial update");
-                return BadRequest();
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _logger.LogInformation(ex.ToString());
             }
-
-            patchDTO.ApplyTo(villaDTO, ModelState);
-
-            Villa model = _mapper.Map<Villa>(villaDTO);
-
-            await _villaRepository.UpdateAsync(model);
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogError($"Villa model is not valid for partial update");
-                return BadRequest();
-            }
-
-            _logger.LogInformation("Villa was partial updated with id: " + id);
-            return NoContent();
+            return _response;
         }
     }
 }
