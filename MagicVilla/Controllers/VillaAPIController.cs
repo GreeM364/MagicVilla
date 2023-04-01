@@ -36,7 +36,7 @@ namespace MagicVilla.Controllers
                 _response.Result = _mapper.Map<List<VillaDTO>>(villas);
                 _response.StatusCode = HttpStatusCode.OK;
 
-                _logger.LogInformation("Getting all villas");
+                _logger.LogInformation("Getting all Villas");
                 return Ok(_response);
             }
             catch(Exception ex)
@@ -100,7 +100,7 @@ namespace MagicVilla.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
 
-                    _logger.LogError("The resulting model of villa is null");
+                    _logger.LogError("The resulting model of Villa is null");
                     return BadRequest(_response);
                 }
 
@@ -111,7 +111,7 @@ namespace MagicVilla.Controllers
                 _response.Result = _mapper.Map<VillaDTO>(villa);
                 _response.StatusCode = HttpStatusCode.Created;
 
-                _logger.LogInformation("A new villa has been created");
+                _logger.LogInformation("A new Villa has been created");
                 return CreatedAtRoute("GetVilla", new { id = villa.Id }, _response);
             }
             catch (Exception ex)
@@ -125,7 +125,6 @@ namespace MagicVilla.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> DeleteVilla(int id)
         {
@@ -170,7 +169,7 @@ namespace MagicVilla.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
 
-                    _logger.LogError("The resulting model of villa is null");
+                    _logger.LogError("The received model of Villa is null");
                     return BadRequest(_response);
                 }
                 if (id != updateDTO.Id)
@@ -212,7 +211,7 @@ namespace MagicVilla.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     _response.IsSuccess = false;
 
-                    _logger.LogError("The resulting patch model of villa is null");
+                    _logger.LogError("The received patch model of Villa is null");
                     return BadRequest();
                 }
 
