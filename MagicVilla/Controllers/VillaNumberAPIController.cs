@@ -32,7 +32,7 @@ namespace MagicVilla.Controllers
         {
             try
             {
-                IEnumerable<VillaNumber> villaNumberList = await _villaNumberRepository.GetAllAsync();
+                IEnumerable<VillaNumber> villaNumberList = await _villaNumberRepository.GetAllAsync(includeProperties: "Villa");
                 _response.Result = _mapper.Map<List<VillaNumberDTO>>(villaNumberList);
                 _response.StatusCode = HttpStatusCode.OK;
 
@@ -93,13 +93,13 @@ namespace MagicVilla.Controllers
                 if (await _villaNumberRepository.GetAsync(u => u.VillaNo == createDTO.VillaNo) != null)
                 {
                     _logger.LogError("Villa Number alredy exsists");
-                    ModelState.AddModelError("CustomError", "Villa Number already Exists!");
+                    ModelState.AddModelError("ErrorMessages", "Villa Number already Exists!");
                     return BadRequest(ModelState);
                 }
                 if (await _villaRepository.GetAsync(u => u.Id == createDTO.VillaID) == null)
                 {
                     _logger.LogError($"Villa id {createDTO.VillaID} is Invalid");
-                    ModelState.AddModelError("CustomError", "Villa ID is Invalid!");
+                    ModelState.AddModelError("ErrorMessages", "Villa ID is Invalid!");
                     return BadRequest(ModelState);
                 }
                 if (createDTO == null)
