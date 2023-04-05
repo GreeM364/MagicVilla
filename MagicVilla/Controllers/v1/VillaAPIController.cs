@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace MagicVilla.Controllers
+namespace MagicVilla.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/VillaAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VillaAPIController : ControllerBase
     {
         private readonly ILogger<VillaAPIController> _logger;
@@ -40,7 +41,7 @@ namespace MagicVilla.Controllers
                 _logger.LogInformation("Getting all Villas");
                 return Ok(_response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.ErrorMessages = new List<string> { ex.ToString() };

@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace MagicVilla.Controllers
+namespace MagicVilla.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VillaNumberAPIController : ControllerBase
     {
         protected APIResponse _response;
@@ -17,7 +18,7 @@ namespace MagicVilla.Controllers
         private readonly ILogger<VillaNumberAPIController> _logger;
         private readonly IVillaNumberRepository _villaNumberRepository;
         private readonly IVillaRepository _villaRepository;
-        public VillaNumberAPIController(IMapper mapper, ILogger<VillaNumberAPIController> logger, 
+        public VillaNumberAPIController(IMapper mapper, ILogger<VillaNumberAPIController> logger,
                                         IVillaNumberRepository villaNumberRepository, IVillaRepository villaRepository)
         {
             _mapper = mapper;
@@ -86,9 +87,9 @@ namespace MagicVilla.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateVillaNumber([FromBody] VillaNumberCreateDTO createDTO)
         {
