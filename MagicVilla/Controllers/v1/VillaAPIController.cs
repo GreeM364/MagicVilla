@@ -33,7 +33,7 @@ namespace MagicVilla.Controllers.v1
         [ResponseCache(CacheProfileName = "Default30")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillas([FromQuery(Name = "filterOccupancy")] int? occupancy,
-                                                     [FromQuery] string? search, int pageSize = 4, int pageNumber = 1)
+                                                     [FromQuery] string? search, int pageSize = 0, int pageNumber = 1)
         {
             try
             {
